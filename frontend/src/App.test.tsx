@@ -12,7 +12,9 @@ describe('App routing', () => {
     )
 
     expect(
-      screen.getByRole('heading', { name: 'Переговорные' }),
+      screen.getByRole('heading', {
+        name: 'Загрузка переговорных...',
+      }),
     ).toBeInTheDocument()
   })
 

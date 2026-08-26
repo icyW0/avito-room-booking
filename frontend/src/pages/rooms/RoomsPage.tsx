@@ -5,30 +5,57 @@ export function RoomsPage(){
 
   return (
     <Container
+      component="main"
       maxWidth={false}
       sx={{
+        minHeight: '100vh',
         px: {
           xs: 2,
           md: 5,
         },
+        py: {
+          xs: 3,
+          md: 5,
+        },
+        bgcolor: 'background.default',
       }}
     >
-      <Typography component="h1" variant="h4">
-        Загрузка переговорных...
-      </Typography>
-
       <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns:
-            'repeat(auto-fill, minmax(min(100%, 437px), 437px))',
-          gap: 4,
-          mt: 4,
-        }}
+        component="section"
+        aria-labelledby="rooms-loading-title"
+        aria-busy="true"
       >
-        {Array.from({ length: 4 }).map((_, index) => (
-          <RoomCardSkeleton key={index} />
-        ))}
+        <Typography
+          id="rooms-loading-title"
+          component="h1"
+          variant="h4"
+          sx={{
+            mb: 4,
+            color: 'text.primary',
+            fontSize: {
+              xs: 26,
+              md: 32,
+            },
+            fontWeight: 700,
+            lineHeight: 1.25,
+          }}
+        >
+          Загрузка переговорных...
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(auto-fill, minmax(min(100%, 437px), 437px))',
+            gap: 4,
+            alignItems: 'start',
+          }}
+        >
+          {Array.from({ length: 4 }).map((_, index) => (
+            <RoomCardSkeleton key={index} />
+          ))}
+        </Box>
       </Box>
     </Container>
   )
@@ -45,6 +72,10 @@ function RoomCardSkeleton(){
         },
         height: 254,
         p: 2.5,
+        bgcolor: 'background.paper',
+        borderColor: '#dbe3ed',
+        borderRadius: 2,
+        boxShadow: 'none',
       }}
     >
       <Stack sx={{ height: '100%', justifyContent: 'space-between' }}>
