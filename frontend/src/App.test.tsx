@@ -1,15 +1,26 @@
 import { render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { App } from './App'
 
+function renderApp(route: string) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[route]}>
+        <App />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  )
+}
+
 describe('App routing', () => {
   it('shows the rooms page', () => {
-    render(
-      <MemoryRouter initialEntries={['/rooms']}>
-        <App />
-      </MemoryRouter>,
-    )
+    renderApp('/rooms')
 
     expect(
       screen.getByRole('heading', {
@@ -19,11 +30,7 @@ describe('App routing', () => {
   })
 
   it('shows the not found page for an unknown route', () => {
-    render(
-      <MemoryRouter initialEntries={['/unknown']}>
-        <App />
-      </MemoryRouter>,
-    )
+    renderApp('/unknown')
 
     expect(
       screen.getByRole('heading', { name: 'Ничего не найдено' }),

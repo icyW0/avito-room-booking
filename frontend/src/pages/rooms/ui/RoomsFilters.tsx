@@ -5,7 +5,18 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import { Box, MenuItem, Select, Stack, Typography } from '@mui/material'
 import { addDays, format, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
-import { useState } from 'react'
+
+export interface RoomsFiltersValue {
+  date: string
+  startTime: string
+  duration: number
+  minCapacity: number
+}
+
+interface RoomsFiltersProps {
+  value: RoomsFiltersValue
+  onChange: (value: RoomsFiltersValue) => void
+}
 
 const capacityOptions = [2, 4, 6, 8, 10, 12]
 const durationOptions = Array.from({ length: 8 }, (_, index) => (index + 1) * 15)
@@ -127,13 +138,10 @@ function FilterLabel({ id, children }: { id: string; children: string }) {
   )
 }
 
-export function RoomsFilters() {
+export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
   const today = new Date()
-  const [selectedDate, setSelectedDate] = useState(format(today, 'yyyy-MM-dd'))
-  const [startTime, setStartTime] = useState('15:00')
-  const [duration, setDuration] = useState(60)
-  const [minCapacity, setMinCapacity] = useState(4)
-  const availableTimeOptions = getTimeOptions(duration)
+
+  const availableTimeOptions = getTimeOptions(value.duration)
 
   return (
     <Box
@@ -212,19 +220,22 @@ export function RoomsFilters() {
                 whiteSpace: 'nowrap',
               }}
             >
-              {formatDateLabel(selectedDate)}
+              {formatDateLabel(value.date)}
             </Typography>
             <Box
               id="rooms-date-filter"
               component="input"
               type="date"
               aria-labelledby="rooms-date-label"
-              value={selectedDate}
+              value={value.date}
               min={format(today, 'yyyy-MM-dd')}
               max={format(addDays(today, 30), 'yyyy-MM-dd')}
               onChange={(event) => {
                 if (event.target.value) {
-                  setSelectedDate(event.target.value)
+                  onChange({
+                    ...value,
+                    date: event.target.value,
+                  })
                 }
               }}
               sx={{
@@ -242,14 +253,25 @@ export function RoomsFilters() {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-time-label">Время начала</FilterLabel>
           <Select
-            value={startTime}
-            onChange={(event) => setStartTime(event.target.value)}
+            value={value.startTime}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                startTime: event.target.value,
+              })
+            }
             IconComponent={ExpandMoreIcon}
             MenuProps={menuProps}
             inputProps={{ 'aria-labelledby': 'rooms-time-label' }}
             renderValue={(value) => (
-              <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                <AccessTimeOutlinedIcon sx={{ color: 'text.secondary', fontSize: 22 }} />
+              <Stack
+                direction="row"
+                spacing={1.25}
+                sx={{ alignItems: 'center' }}
+              >
+                <AccessTimeOutlinedIcon
+                  sx={{ color: 'text.secondary', fontSize: 22 }}
+                />
                 <span>{value}</span>
               </Stack>
             )}
@@ -266,16 +288,19 @@ export function RoomsFilters() {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-duration-label">Длительность</FilterLabel>
           <Select
-            value={duration}
+            value={value.duration}
             onChange={(event) => {
               const nextDuration = Number(event.target.value)
               const latestStart = 20 * 60 - nextDuration
 
-              setDuration(nextDuration)
-
-              if (timeToMinutes(startTime) > latestStart) {
-                setStartTime(formatTime(latestStart))
-              }
+              onChange({
+                ...value,
+                duration: nextDuration,
+                startTime:
+                  timeToMinutes(value.startTime) > latestStart
+                    ? formatTime(latestStart)
+                    : value.startTime,
+              })
             }}
             IconComponent={ExpandMoreIcon}
             MenuProps={menuProps}
@@ -294,14 +319,25 @@ export function RoomsFilters() {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-capacity-label">Вместимость</FilterLabel>
           <Select
-            value={minCapacity}
-            onChange={(event) => setMinCapacity(Number(event.target.value))}
+            value={value.minCapacity}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                minCapacity: Number(event.target.value),
+              })
+            }
             IconComponent={ExpandMoreIcon}
             MenuProps={menuProps}
             inputProps={{ 'aria-labelledby': 'rooms-capacity-label' }}
             renderValue={(value) => (
-              <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                <PeopleOutlinedIcon sx={{ color: 'text.secondary', fontSize: 22 }} />
+              <Stack
+                direction="row"
+                spacing={1.25}
+                sx={{ alignItems: 'center' }}
+              >
+                <PeopleOutlinedIcon
+                  sx={{ color: 'text.secondary', fontSize: 22 }}
+                />
                 <span>Мин. {value} чел.</span>
               </Stack>
             )}
