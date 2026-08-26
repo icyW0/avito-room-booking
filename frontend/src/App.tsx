@@ -3,6 +3,7 @@ import { PlaceholderPage } from './pages/PlaceholderPage'
 import { RoomsPage } from './pages/rooms/RoomsPage.tsx'
 import { AppLayout } from './app/layout/AppLayout.tsx'
 import NotFoundPage from './pages/not-found/NotFoundPage.tsx'
+import { RoomDetailsPage } from './pages/room-details/RoomDetailsPage.tsx'
 
 export function App() {
   return (
@@ -14,7 +15,7 @@ export function App() {
 
         <Route
           path="/rooms/:roomId"
-          element={<PlaceholderPage title="Расписание комнаты" />}
+          element={<RoomDetailsPage />}
         />
 
         <Route

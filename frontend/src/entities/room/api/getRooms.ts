@@ -1,5 +1,5 @@
 import { env } from '../../../shared/config/env'
-import type { RoomsResponse } from '../model/types'
+import type { Room, RoomsResponse } from '../model/types'
 
 export interface GetRoomsParams {
   officeId: string
@@ -29,4 +29,14 @@ export async function getRooms(params: GetRoomsParams): Promise<RoomsResponse> {
   }
 
   return response.json() as Promise<RoomsResponse>
+}
+
+export async function getRoom(roomId: string):Promise<Room>{
+  const response = await fetch(`${env.apiUrl}/rooms/${roomId}`);
+
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить переговорную: ${response.status}`)
+  }
+
+  return response.json() as Promise<Room>;
 }
