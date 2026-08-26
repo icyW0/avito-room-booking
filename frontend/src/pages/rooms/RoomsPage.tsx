@@ -1,63 +1,75 @@
 import { Card, Container, Skeleton, Stack, Typography, Box } from '@mui/material'
+import { OfficeSelector } from './ui/OfficeSelector.tsx'
 
 export function RoomsPage(){
 
 
   return (
-    <Container
+    <Box
       component="main"
-      maxWidth={false}
       sx={{
         minHeight: '100vh',
-        px: {
-          xs: 2,
-          md: 5,
-        },
-        py: {
-          xs: 3,
-          md: 5,
-        },
         bgcolor: 'background.default',
       }}
     >
-      <Box
-        component="section"
-        aria-labelledby="rooms-loading-title"
-        aria-busy="true"
-      >
-        <Typography
-          id="rooms-loading-title"
-          component="h1"
-          variant="h4"
-          sx={{
-            mb: 4,
-            color: 'text.primary',
-            fontSize: {
-              xs: 26,
-              md: 32,
-            },
-            fontWeight: 700,
-            lineHeight: 1.25,
-          }}
-        >
-          Загрузка переговорных...
-        </Typography>
+      <OfficeSelector />
 
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          px: {
+            xs: 2,
+            md: 5,
+          },
+          py: {
+            xs: 3,
+            md: 5,
+          },
+        }}
+      >
         <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns:
-              'repeat(auto-fill, minmax(min(100%, 437px), 437px))',
-            gap: 4,
-            alignItems: 'start',
-          }}
+          component="section"
+          aria-labelledby="rooms-loading-title"
+          aria-busy="true"
         >
-          {Array.from({ length: 4 }).map((_, index) => (
-            <RoomCardSkeleton key={index} />
-          ))}
+          <Typography
+            id="rooms-loading-title"
+            component="h1"
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: 'text.primary',
+              fontSize: {
+                xs: 26,
+                md: 32,
+              },
+              fontWeight: 700,
+              lineHeight: 1.25,
+            }}
+          >
+            Загрузка переговорных...
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr)',
+                md: 'repeat(2, minmax(0, 437px))',
+                xl: 'repeat(3, 437px)',
+              },
+              gap: 3,
+              alignItems: 'start',
+            }}
+          >
+            {Array.from({ length: 4 }).map((_, index) => (
+              <RoomCardSkeleton key={index} />
+            ))}
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   )
 }
 
