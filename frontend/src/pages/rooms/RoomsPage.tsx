@@ -1,5 +1,6 @@
 import { Card, Container, Skeleton, Stack, Typography, Box } from '@mui/material'
 import { OfficeSelector } from './ui/OfficeSelector.tsx'
+import { RoomsFilters } from './ui/RoomsFilters.tsx'
 
 export function RoomsPage(){
 
@@ -13,6 +14,7 @@ export function RoomsPage(){
       }}
     >
       <OfficeSelector />
+      <RoomsFilters />
 
       <Container
         maxWidth={false}
