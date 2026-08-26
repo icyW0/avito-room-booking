@@ -1,5 +1,5 @@
 import { TZDate } from '@date-fns/tz'
-import { Alert, Box, Button, Card, Container, Skeleton, Stack, Typography } from '@mui/material'
+import { Alert, Box, Card, Container, Skeleton, Stack, Typography } from '@mui/material'
 import { addMinutes, format } from 'date-fns'
 import { useState, type ReactNode } from 'react'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery'
@@ -7,6 +7,7 @@ import { useRoomsQuery } from '../../entities/room/api/useRoomsQuery'
 import { OfficeSelector } from './ui/OfficeSelector'
 import { RoomCard } from './ui/RoomCard'
 import { RoomsFilters, type RoomsFiltersValue } from './ui/RoomsFilters'
+import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage.tsx'
 
 function getBookingInterval(
   filters: RoomsFiltersValue,
@@ -59,12 +60,11 @@ export function RoomsPage() {
 
   if (isError) {
     content = (
-      <Alert
-        severity="error"
-        action={<Button onClick={retryLoading}>Повторить</Button>}
-      >
-        Не удалось загрузить переговорные. Проверьте, запущен ли backend.
-      </Alert>
+      <DataLoadingError
+        title="Не удалось загрузить данные"
+        description="Произошла ошибка при загрузке списка переговорных"
+        onRetry={retryLoading}
+      />
     )
   } else if (isLoading) {
     content = (
