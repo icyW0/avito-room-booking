@@ -33,7 +33,7 @@ describe('App routing', () => {
     renderApp('/unknown')
 
     expect(
-      screen.getByRole('heading', { name: 'Ничего не найдено' }),
+      screen.getByRole('heading', { name: 'Страница не найдена' }),
     ).toBeInTheDocument()
   })
 })
