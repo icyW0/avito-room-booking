@@ -16,6 +16,7 @@ export interface RoomsFiltersValue {
 interface RoomsFiltersProps {
   value: RoomsFiltersValue
   onChange: (value: RoomsFiltersValue) => void
+  disabled?: boolean
 }
 
 const capacityOptions = [2, 4, 6, 8, 10, 12]
@@ -138,7 +139,7 @@ function FilterLabel({ id, children }: { id: string; children: string }) {
   )
 }
 
-export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
+export function RoomsFilters({ value, onChange, disabled = false }: RoomsFiltersProps) {
   const today = new Date()
 
   const availableTimeOptions = getTimeOptions(value.duration)
@@ -228,6 +229,7 @@ export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
               type="date"
               aria-labelledby="rooms-date-label"
               value={value.date}
+              disabled={disabled}
               min={format(today, 'yyyy-MM-dd')}
               max={format(addDays(today, 30), 'yyyy-MM-dd')}
               onChange={(event) => {
@@ -253,6 +255,7 @@ export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-time-label">Время начала</FilterLabel>
           <Select
+            disabled={disabled}
             value={value.startTime}
             onChange={(event) =>
               onChange({
@@ -288,6 +291,7 @@ export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-duration-label">Длительность</FilterLabel>
           <Select
+            disabled={disabled}
             value={value.duration}
             onChange={(event) => {
               const nextDuration = Number(event.target.value)
@@ -319,6 +323,7 @@ export function RoomsFilters({ value, onChange }: RoomsFiltersProps) {
         <Stack spacing={0.75}>
           <FilterLabel id="rooms-capacity-label">Вместимость</FilterLabel>
           <Select
+            disabled={disabled}
             value={value.minCapacity}
             onChange={(event) =>
               onChange({

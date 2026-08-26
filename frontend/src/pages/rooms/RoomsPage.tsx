@@ -1,5 +1,5 @@
 import { TZDate } from '@date-fns/tz'
-import { Alert, Box, Card, Container, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Card, Container, Skeleton, Stack, Typography } from '@mui/material'
 import { addMinutes, format } from 'date-fns'
 import { useState, type ReactNode } from 'react'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery'
@@ -8,6 +8,7 @@ import { OfficeSelector } from './ui/OfficeSelector'
 import { RoomCard } from './ui/RoomCard'
 import { RoomsFilters, type RoomsFiltersValue } from './ui/RoomsFilters'
 import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage.tsx'
+import { EmptyState } from '../../shared/ui/EmptyState'
 
 function getBookingInterval(
   filters: RoomsFiltersValue,
@@ -37,7 +38,7 @@ export function RoomsPage() {
 
   const officesQuery = useOfficesQuery()
   const offices = officesQuery.data?.items ?? []
-  const effectiveOfficeId = selectedOfficeId || offices[0]?.id || ''
+  const effectiveOfficeId = selectedOfficeId
   const selectedOffice = offices.find((office) => office.id === effectiveOfficeId)
   const interval = getBookingInterval(filters, selectedOffice?.timezone)
 
@@ -47,13 +48,23 @@ export function RoomsPage() {
     ...(interval ?? {}),
   })
 
-  const isLoading = officesQuery.isPending || roomsQuery.isPending
+  const isLoading =
+    officesQuery.isPending || (Boolean(effectiveOfficeId) && roomsQuery.isPending)
   const isError = officesQuery.isError || roomsQuery.isError
   const rooms = roomsQuery.data?.items ?? []
 
   function retryLoading() {
     void officesQuery.refetch()
     void roomsQuery.refetch()
+  }
+
+  function resetFilters() {
+    setFilters({
+      date: format(new Date(), 'yyyy-MM-dd'),
+      startTime: '15:00',
+      duration: 60,
+      minCapacity: 4,
+    })
   }
 
   let content: ReactNode
@@ -74,12 +85,10 @@ export function RoomsPage() {
         ))}
       </RoomsGrid>
     )
+  } else if (!effectiveOfficeId) {
+    content = <EmptyState variant="selectOffice" />
   } else if (rooms.length === 0) {
-    content = (
-      <Alert severity="info">
-        На выбранное время подходящих переговорных не найдено. Измените фильтры.
-      </Alert>
-    )
+    content = <EmptyState variant="noRooms" onAction={resetFilters} />
   } else {
     content = (
       <RoomsGrid>
@@ -98,7 +107,11 @@ export function RoomsPage() {
         offices={offices}
         disabled={officesQuery.isPending}
       />
-      <RoomsFilters value={filters} onChange={setFilters} />
+      <RoomsFilters
+        value={filters}
+        onChange={setFilters}
+        disabled={!effectiveOfficeId}
+      />
 
       <Container
         maxWidth={false}
@@ -106,7 +119,7 @@ export function RoomsPage() {
         sx={{ px: { xs: 2, md: 5 }, py: { xs: 3, md: 5 } }}
       >
         <Box component="section" aria-labelledby="rooms-title" aria-busy={isLoading}>
-          <Typography
+          {(isLoading || rooms.length > 0) && <Typography
             id="rooms-title"
             component="h1"
             variant="h4"
@@ -119,7 +132,7 @@ export function RoomsPage() {
             }}
           >
             {isLoading ? 'Загрузка переговорных...' : 'Доступные переговорные в этом офисе'}
-          </Typography>
+          </Typography>}
 
           {content}
         </Box>

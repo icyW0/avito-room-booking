@@ -26,7 +26,7 @@ export function OfficeSelector({
   offices,
   disabled = false,
 }: OfficeSelectorProps) {
-  const selectedOffice = offices.find((office) => office.id === value) ?? offices[0]
+  const selectedOffice = offices.find((office) => office.id === value)
 
   return (
     <Container
@@ -47,6 +47,7 @@ export function OfficeSelector({
       <Stack spacing={0.75}>
         <Select
           value={value}
+          displayEmpty
           disabled={disabled || offices.length === 0}
           onChange={(event) => onChange(event.target.value)}
           variant="standard"
@@ -78,6 +79,10 @@ export function OfficeSelector({
             '& .MuiSelect-select': { minHeight: 'unset', py: 0, pr: '30px !important', pl: 0 },
             '& .MuiSelect-icon': { right: 0, color: 'text.primary', fontSize: 24 },
           }}
+          renderValue={(officeId) =>
+            offices.find((office) => office.id === officeId)?.name ??
+            'Выберите офис'
+          }
         >
           {offices.map((office) => (
             <MenuItem
@@ -103,7 +108,7 @@ export function OfficeSelector({
 
         <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', color: 'text.secondary' }}>
           <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
-            {selectedOffice?.address ?? 'Загрузка офисов…'}
+            {selectedOffice?.address ?? 'Адрес не выбран'}
           </Typography>
           <Box
             component="span"
@@ -113,7 +118,7 @@ export function OfficeSelector({
           <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
             {selectedOffice
               ? `Местное время: ${getOfficeLocalTime(selectedOffice)}`
-              : 'Получаем данные офиса'}
+              : 'Местное время: --'}
           </Typography>
         </Stack>
       </Stack>
