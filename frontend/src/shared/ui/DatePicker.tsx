@@ -25,6 +25,7 @@ interface DatePickerProps {
   max: string
   onChange: (value: string) => void
   label?: string
+  fullWidth?: boolean
 }
 
 const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
@@ -35,6 +36,7 @@ export function DatePicker({
   max,
   onChange,
   label = 'Выбрать дату',
+  fullWidth = false,
 }: DatePickerProps) {
   const selectedDate = parseISO(value)
   const minDate = parseISO(min)
@@ -64,7 +66,7 @@ export function DatePicker({
         startIcon={<CalendarTodayOutlinedIcon />}
         onClick={openCalendar}
         sx={{
-          width: 194,
+          width: fullWidth ? '100%' : 194,
           height: 52,
           color: 'text.primary',
           borderColor: 'divider',

@@ -44,7 +44,7 @@ export function RoomDetailsPage() {
       >
         <RoomAbout room={room} />
 
-        <RoomSchedule roomId={room.id} timezone={room.office.timezone} />
+        <RoomSchedule room={room} />
       </Box>
     </Container>
   )

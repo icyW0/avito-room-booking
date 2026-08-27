@@ -2,12 +2,13 @@ import { Box, Button, Card, Stack, Typography } from '@mui/material'
 import { addDays, format, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { useState } from 'react'
+import type { Room } from '../../../entities/room/model/types'
 import { DatePicker } from '../../../shared/ui/DatePicker'
+import { BookingModal } from './BookingModal'
 import { ScheduleTimeline } from './ScheduleTimeline'
 
 interface RoomScheduleProps {
-  roomId: string
-  timezone: string
+  room: Room
 }
 
 function getDateInTimezone(timezone: string) {
@@ -23,9 +24,12 @@ function getDateInTimezone(timezone: string) {
   return `${part('year')}-${part('month')}-${part('day')}`
 }
 
-export function RoomSchedule({ roomId, timezone }: RoomScheduleProps) {
+export function RoomSchedule({ room }: RoomScheduleProps) {
+  const { id: roomId, office } = room
+  const timezone = office.timezone
   const today = getDateInTimezone(timezone)
   const [selectedDate, setSelectedDate] = useState(today)
+  const [isBookingModalOpen, setBookingModalOpen] = useState(false)
   const titleId = `room-${roomId}-schedule-title`
 
   return (
@@ -88,7 +92,9 @@ export function RoomSchedule({ roomId, timezone }: RoomScheduleProps) {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
+          type="button"
           variant="contained"
+          onClick={() => setBookingModalOpen(true)}
           sx={{
             width: 288,
             height: 52,
@@ -102,6 +108,15 @@ export function RoomSchedule({ roomId, timezone }: RoomScheduleProps) {
           Забронировать комнату
         </Button>
       </Box>
+
+      {isBookingModalOpen && (
+        <BookingModal
+          open
+          room={room}
+          initialDate={selectedDate}
+          onClose={() => setBookingModalOpen(false)}
+        />
+      )}
     </Card>
   )
 }
