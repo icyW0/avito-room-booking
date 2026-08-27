@@ -1,9 +1,9 @@
-import { Container, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { useRoomQuery } from '../../entities/room/api/useRoomQuery'
 import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage'
 import RoomAbout from './ui/RoomAbout.tsx'
-import ScheduleRoom from './ui/ScheduleRoom.tsx'
+import { RoomSchedule } from './ui/RoomSchedule.tsx'
 
 export function RoomDetailsPage() {
   const { roomId = '' } = useParams()
@@ -29,10 +29,23 @@ export function RoomDetailsPage() {
     <Container
       component="main"
       maxWidth={false}
-      sx={{ display: 'flex', gap: 4, px: { xs: 2, md: 5 }, py: { xs: 3, md: 5 } }}
+      sx={{
+        px: { xs: 2, md: 5 },
+        py: { xs: 3, md: 5 },
+      }}
     >
-      <RoomAbout room={room} />
-      <ScheduleRoom/>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 5,
+          alignItems: 'start',
+          flexDirection: { xs: 'column', lg: 'row' },
+        }}
+      >
+        <RoomAbout room={room} />
+
+        <RoomSchedule roomId={room.id} timezone={room.office.timezone} />
+      </Box>
     </Container>
   )
 }
