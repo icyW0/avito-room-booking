@@ -12,12 +12,16 @@ import {
   Stack,
   TextField,
   Typography,
+  Alert,
 } from '@mui/material'
 import { addDays, addMinutes, format, parse, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { useState, type FormEvent } from 'react'
 import type { Room } from '../../../entities/room/model/types'
 import { DatePicker } from '../../../shared/ui/DatePicker'
+import { useCreateBookingMutation } from '../../../entities/booking/api/useCreateBookingMutation'
+import { getBookingInterval } from '../../../entities/booking/lib/getBookingInterval'
+import { ApiError } from '../../../shared/api/ApiError'
 
 interface BookingModalProps {
   open: boolean
@@ -71,6 +75,9 @@ export function BookingModal({
   const [duration, setDuration] = useState(60)
   const [comment, setComment] = useState('')
   const [titleError, setTitleError] = useState(false)
+  const [dateTimeError, setDateTimeError] = useState<string | null>(null)
+
+  const createBookingMutation = useCreateBookingMutation()
 
   const endTime = getEndTime(date, startTime, duration)
   const dateLabel = format(parseISO(date), 'd MMMM, EEE', { locale: ru })
@@ -80,8 +87,46 @@ export function BookingModal({
 
   function submitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
     const hasTitleError = title.trim().length === 0
     setTitleError(hasTitleError)
+    setDateTimeError(null)
+
+    if (hasTitleError) {
+      return
+    }
+
+    const interval = getBookingInterval({
+      date,
+      startTime,
+      duration,
+      timezone: room.office.timezone,
+    })
+
+    if (new Date(interval.startsAt).getTime() <= Date.now()) {
+      setDateTimeError('Нельзя создать бронирование в прошлом')
+      return
+    }
+
+    createBookingMutation.mutate(
+      {
+        roomId: room.id,
+        title: title.trim(),
+
+        ...(comment.trim()
+          ? {
+              comment: comment.trim(),
+            }
+          : {}),
+
+        ...interval,
+      },
+      {
+        onSuccess: () => {
+          onClose()
+        },
+      },
+    )
   }
 
   return (
@@ -158,7 +203,9 @@ export function BookingModal({
                       spacing={1.25}
                       sx={{ alignItems: 'center' }}
                     >
-                      <AccessTimeOutlinedIcon sx={{ color: 'text.secondary' }} />
+                      <AccessTimeOutlinedIcon
+                        sx={{ color: 'text.secondary' }}
+                      />
                       <span>{value}</span>
                     </Stack>
                   )}
@@ -172,6 +219,19 @@ export function BookingModal({
                 </Select>
               </Box>
             </Stack>
+
+            {dateTimeError && (
+              <Typography
+                role="alert"
+                sx={{
+                  mt: 1,
+                  color: 'error.main',
+                  fontSize: 13,
+                }}
+              >
+                {dateTimeError}
+              </Typography>
+            )}
 
             <Box>
               <FieldLabel>Продолжительность</FieldLabel>
@@ -214,6 +274,14 @@ export function BookingModal({
               />
             </Box>
 
+            {createBookingMutation.isError && (
+              <Alert severity="error">
+                {createBookingMutation.error instanceof ApiError
+                  ? createBookingMutation.error.message
+                  : 'Не удалось создать бронирование. Попробуйте снова.'}
+              </Alert>
+            )}
+
             <Stack
               direction="row"
               spacing={1.25}
@@ -246,8 +314,15 @@ export function BookingModal({
               >
                 Отмена
               </Button>
-              <Button type="submit" variant="contained" sx={modalButtonSx}>
-                Забронировать
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={createBookingMutation.isPending}
+                sx={modalButtonSx}
+              >
+                {createBookingMutation.isPending
+                  ? 'Бронируем...'
+                  : 'Забронировать'}
               </Button>
             </Stack>
           </Stack>
