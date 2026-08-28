@@ -1,5 +1,6 @@
 import type { Office } from '../../office/model/types'
 import type { RoomFeature } from '../../room/model/types'
+import type { User } from '../../user/model/types'
 
 export interface CreateBookingPayload {
   roomId: string
@@ -18,15 +19,6 @@ export interface BookingRoom {
   features: RoomFeature[]
 }
 
-export interface BookingOwner {
-  id: string
-  login: string
-  displayName: string
-  email: string
-  avatarUrl: string | null
-  initials: string
-}
-
 export interface Booking {
   id: string
   roomId: string
@@ -38,7 +30,7 @@ export interface Booking {
   createdAt: string
   room: BookingRoom
   office: Office
-  owner: BookingOwner
+  owner: User
 }
 
 export interface BookingsResponse {
