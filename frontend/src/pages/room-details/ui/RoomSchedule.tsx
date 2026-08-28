@@ -88,45 +88,66 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
         boxShadow: 'none',
       }}
     >
-      <Stack
-        direction="row"
-        sx={{
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box>
-          <Typography
-            id={titleId}
-            component="h2"
-            sx={{
-              fontSize: 28,
-              fontWeight: 700,
-            }}
-          >
-            Расписание на день
-          </Typography>
+      {bookingsQuery.isPending ? (
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Skeleton variant="rounded" width={262} height={34} />
 
-          <Typography
-            sx={{
-              mt: 1,
-              color: 'text.secondary',
-              fontSize: 16,
-            }}
-          >
-            {format(parseISO(selectedDate), 'EEEE, d MMMM', {
-              locale: ru,
-            })}
-          </Typography>
-        </Box>
+            <Skeleton
+              variant="rounded"
+              width={184}
+              height={20}
+              sx={{ mt: 1 }}
+            />
+          </Box>
 
-        <DatePicker
-          value={selectedDate}
-          min={today}
-          max={format(addDays(parseISO(today), 30), 'yyyy-MM-dd')}
-          onChange={setSelectedDate}
-        />
-      </Stack>
+          <Skeleton variant="rounded" width={194} height={52} />
+        </Stack>
+      ) : (
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Typography
+              id={titleId}
+              component="h2"
+              sx={{
+                fontSize: 28,
+                fontWeight: 700,
+              }}
+            >
+              Расписание на день
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 1,
+                color: 'text.secondary',
+                fontSize: 16,
+              }}
+            >
+              {format(parseISO(selectedDate), 'EEEE, d MMMM', { locale: ru })}
+            </Typography>
+          </Box>
+
+          <DatePicker
+            value={selectedDate}
+            min={today}
+            max={format(addDays(parseISO(today), 30), 'yyyy-MM-dd')}
+            onChange={setSelectedDate}
+          />
+        </Stack>
+      )}
 
       <ScheduleTimeline />
 
