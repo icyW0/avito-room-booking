@@ -9,6 +9,7 @@ import { ScheduleTimeline } from './ScheduleTimeline'
 import { useRoomBookingsQuery } from '../../../entities/booking/api/useRoomBookingsQuery'
 import { getDayInterval } from '../../../entities/booking/lib/getDayInterval'
 import { DataLoadingError } from '../../../shared/ui/ErrorLoadingPage'
+import { useCurrentUserQuery } from '../../../entities/user/api/useCurrentUserQuery'
 
 interface RoomScheduleProps {
   room: Room
@@ -26,6 +27,7 @@ function getDateInTimezone(timezone: string) {
 
   return `${part('year')}-${part('month')}-${part('day')}`
 }
+
 
 export function RoomSchedule({ room }: RoomScheduleProps) {
   const { id: roomId, office } = room
@@ -47,7 +49,18 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
     to: interval.to,
   })
 
-  if (bookingsQuery.isError) {
+  const currentUserQuery = useCurrentUserQuery()
+
+  const isLoading = bookingsQuery.isPending || currentUserQuery.isPending
+
+  const isError = bookingsQuery.isError || currentUserQuery.isError
+
+  function retryLoading() {
+    void bookingsQuery.refetch()
+    void currentUserQuery.refetch()
+  }
+
+  if (isError) {
     return (
       <Card
         component="section"
@@ -66,7 +79,7 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
         <DataLoadingError
           title="Не удалось загрузить расписание"
           description="Произошла ошибка при загрузке расписания переговорной"
-          onRetry={() => void bookingsQuery.refetch()}
+          onRetry={retryLoading}
         />
       </Card>
     )
