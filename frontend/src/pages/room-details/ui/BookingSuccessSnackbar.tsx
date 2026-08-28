@@ -52,6 +52,7 @@ export function BookingSuccessSnackbar({
   return (
     <Snackbar
       open
+      autoHideDuration={6000}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'center',
