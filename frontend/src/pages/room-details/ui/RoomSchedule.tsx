@@ -151,23 +151,32 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
 
       <ScheduleTimeline />
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          type="button"
-          variant="contained"
-          onClick={() => setBookingModalOpen(true)}
-          sx={{
-            width: 288,
-            height: 52,
-            mt: 3,
-            fontSize: 16,
-            fontWeight: 600,
-            textTransform: 'none',
-            boxShadow: 'none',
-          }}
-        >
-          Забронировать комнату
-        </Button>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {bookingsQuery.isPending ? (
+          <Skeleton variant="rounded" width={288} height={52} sx={{ mt: 3 }} />
+        ) : (
+          <Button
+            type="button"
+            variant="contained"
+            onClick={() => setBookingModalOpen(true)}
+            sx={{
+              width: 288,
+              height: 52,
+              mt: 3,
+              fontSize: 16,
+              fontWeight: 600,
+              textTransform: 'none',
+              boxShadow: 'none',
+            }}
+          >
+            Забронировать комнату
+          </Button>
+        )}
       </Box>
 
       {isBookingModalOpen && (
