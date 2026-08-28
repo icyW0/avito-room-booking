@@ -101,7 +101,7 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
         boxShadow: 'none',
       }}
     >
-      {bookingsQuery.isPending ? (
+      {isLoading ? (
         <Stack
           direction="row"
           sx={{
@@ -170,7 +170,7 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
           justifyContent: 'flex-end',
         }}
       >
-        {bookingsQuery.isPending ? (
+        {isLoading ? (
           <Skeleton variant="rounded" width={288} height={52} sx={{ mt: 3 }} />
         ) : (
           <Button
