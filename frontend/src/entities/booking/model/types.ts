@@ -40,3 +40,7 @@ export interface Booking {
   office: Office
   owner: BookingOwner
 }
+
+export interface BookingsResponse {
+  items: Booking[]
+}
