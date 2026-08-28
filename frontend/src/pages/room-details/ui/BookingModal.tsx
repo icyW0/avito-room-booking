@@ -30,6 +30,7 @@ interface BookingModalProps {
   initialDate: string
   onClose: () => void
   onCreated: (booking: Booking) => void
+  onConflict: () => void
 }
 
 const durationOptions = Array.from({ length: 8 }, (_, index) => (index + 1) * 15)
@@ -70,6 +71,7 @@ export function BookingModal({
   initialDate,
   onClose,
   onCreated,
+  onConflict,
 }: BookingModalProps) {
   const today = format(new Date(), 'yyyy-MM-dd')
   const [title, setTitle] = useState('')
@@ -127,6 +129,15 @@ export function BookingModal({
       {
         onSuccess: (booking) => {
           onCreated(booking)
+        },
+        onError: (error) => {
+          if (
+            error instanceof ApiError &&
+            error.status === 409 &&
+            error.code === 'BOOKING_CONFLICT'
+          ) {
+            onConflict()
+          }
         },
       },
     )
@@ -277,13 +288,17 @@ export function BookingModal({
               />
             </Box>
 
-            {createBookingMutation.isError && (
+            {createBookingMutation.isError &&
+              !(
+                createBookingMutation.error instanceof ApiError &&
+                createBookingMutation.error.code === 'BOOKING_CONFLICT'
+              ) && (
               <Alert severity="error">
                 {createBookingMutation.error instanceof ApiError
                   ? createBookingMutation.error.message
                   : 'Не удалось создать бронирование. Попробуйте снова.'}
               </Alert>
-            )}
+              )}
 
             <Stack
               direction="row"

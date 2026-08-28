@@ -12,6 +12,7 @@ import { DataLoadingError } from '../../../shared/ui/ErrorLoadingPage'
 import { useCurrentUserQuery } from '../../../entities/user/api/useCurrentUserQuery'
 import type { Booking } from '../../../entities/booking/model/types'
 import { BookingSuccessSnackbar } from './BookingSuccessSnackbar'
+import { BookingConflictDialog } from './BookingConflictDialog'
 
 interface RoomScheduleProps {
   room: Room
@@ -38,6 +39,7 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
   const [selectedDate, setSelectedDate] = useState(today)
   const [isBookingModalOpen, setBookingModalOpen] = useState(false)
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null)
+  const [isConflictDialogOpen, setConflictDialogOpen] = useState(false)
 
   const titleId = `room-${roomId}-schedule-title`
 
@@ -211,8 +213,21 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
             setBookingModalOpen(false)
             setCreatedBooking(booking)
           }}
+          onConflict={() => {
+            void bookingsQuery.refetch()
+            setBookingModalOpen(false)
+            setConflictDialogOpen(true)
+          }}
         />
       )}
+
+      <BookingConflictDialog
+        open={isConflictDialogOpen}
+        onChooseAnotherTime={() => {
+          setConflictDialogOpen(false)
+          setBookingModalOpen(true)
+        }}
+      />
 
       <BookingSuccessSnackbar
         booking={createdBooking}
