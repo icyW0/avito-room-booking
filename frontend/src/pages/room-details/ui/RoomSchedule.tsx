@@ -10,6 +10,8 @@ import { useRoomBookingsQuery } from '../../../entities/booking/api/useRoomBooki
 import { getDayInterval } from '../../../entities/booking/lib/getDayInterval'
 import { DataLoadingError } from '../../../shared/ui/ErrorLoadingPage'
 import { useCurrentUserQuery } from '../../../entities/user/api/useCurrentUserQuery'
+import type { Booking } from '../../../entities/booking/model/types'
+import { BookingSuccessSnackbar } from './BookingSuccessSnackbar'
 
 interface RoomScheduleProps {
   room: Room
@@ -35,6 +37,7 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
   const today = getDateInTimezone(timezone)
   const [selectedDate, setSelectedDate] = useState(today)
   const [isBookingModalOpen, setBookingModalOpen] = useState(false)
+  const [createdBooking, setCreatedBooking] = useState<Booking | null>(null)
 
   const titleId = `room-${roomId}-schedule-title`
 
@@ -204,8 +207,17 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
           room={room}
           initialDate={selectedDate}
           onClose={() => setBookingModalOpen(false)}
+          onCreated={(booking) => {
+            setBookingModalOpen(false)
+            setCreatedBooking(booking)
+          }}
         />
       )}
+
+      <BookingSuccessSnackbar
+        booking={createdBooking}
+        onClose={() => setCreatedBooking(null)}
+      />
     </Card>
   )
 }

@@ -22,12 +22,14 @@ import { DatePicker } from '../../../shared/ui/DatePicker'
 import { useCreateBookingMutation } from '../../../entities/booking/api/useCreateBookingMutation'
 import { getBookingInterval } from '../../../entities/booking/lib/getBookingInterval'
 import { ApiError } from '../../../shared/api/ApiError'
+import type { Booking } from '../../../entities/booking/model/types'
 
 interface BookingModalProps {
   open: boolean
   room: Room
   initialDate: string
   onClose: () => void
+  onCreated: (booking: Booking) => void
 }
 
 const durationOptions = Array.from({ length: 8 }, (_, index) => (index + 1) * 15)
@@ -67,6 +69,7 @@ export function BookingModal({
   room,
   initialDate,
   onClose,
+  onCreated,
 }: BookingModalProps) {
   const today = format(new Date(), 'yyyy-MM-dd')
   const [title, setTitle] = useState('')
@@ -122,8 +125,8 @@ export function BookingModal({
         ...interval,
       },
       {
-        onSuccess: () => {
-          onClose()
+        onSuccess: (booking) => {
+          onCreated(booking)
         },
       },
     )
