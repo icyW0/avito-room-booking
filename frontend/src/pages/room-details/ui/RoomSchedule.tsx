@@ -85,6 +85,9 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
     )
   }
 
+  const bookings = bookingsQuery.data?.items ?? []
+  const currentUserId = currentUserQuery.data?.id ?? ''
+
   return (
     <Card
       component="section"
@@ -162,8 +165,11 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
         </Stack>
       )}
 
-      <ScheduleTimeline />
-
+      <ScheduleTimeline
+        bookings={bookings}
+        currentUserId={currentUserId}
+        timezone={timezone}
+      />
       <Box
         sx={{
           display: 'flex',
