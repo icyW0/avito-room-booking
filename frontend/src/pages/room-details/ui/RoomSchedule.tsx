@@ -1,4 +1,4 @@
-import { Box, Button, Card, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, Stack, Typography, Skeleton } from '@mui/material'
 import { addDays, format, parseISO } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { useState } from 'react'
@@ -6,6 +6,9 @@ import type { Room } from '../../../entities/room/model/types'
 import { DatePicker } from '../../../shared/ui/DatePicker'
 import { BookingModal } from './BookingModal'
 import { ScheduleTimeline } from './ScheduleTimeline'
+import { useRoomBookingsQuery } from '../../../entities/booking/api/useRoomBookingsQuery'
+import { getDayInterval } from '../../../entities/booking/lib/getDayInterval'
+import { DataLoadingError } from '../../../shared/ui/ErrorLoadingPage'
 
 interface RoomScheduleProps {
   room: Room
@@ -30,7 +33,44 @@ export function RoomSchedule({ room }: RoomScheduleProps) {
   const today = getDateInTimezone(timezone)
   const [selectedDate, setSelectedDate] = useState(today)
   const [isBookingModalOpen, setBookingModalOpen] = useState(false)
+
   const titleId = `room-${roomId}-schedule-title`
+
+  const interval = getDayInterval({
+    date: selectedDate,
+    timezone,
+  })
+
+  const bookingsQuery = useRoomBookingsQuery({
+    roomId,
+    from: interval.from,
+    to: interval.to,
+  })
+
+  if (bookingsQuery.isError) {
+    return (
+      <Card
+        component="section"
+        variant="outlined"
+        sx={{
+          display: 'flex',
+          width: '100%',
+          minHeight: 568,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderColor: 'divider',
+          borderRadius: 2.5,
+          boxShadow: 'none',
+        }}
+      >
+        <DataLoadingError
+          title="Не удалось загрузить расписание"
+          description="Произошла ошибка при загрузке расписания переговорной"
+          onRetry={() => void bookingsQuery.refetch()}
+        />
+      </Card>
+    )
+  }
 
   return (
     <Card
