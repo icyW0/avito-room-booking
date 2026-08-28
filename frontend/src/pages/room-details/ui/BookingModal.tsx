@@ -201,7 +201,12 @@ export function BookingModal({
                   max={format(addDays(parseISO(today), 30), 'yyyy-MM-dd')}
                   label={dateLabel}
                   fullWidth
-                  onChange={setDate}
+                  error={Boolean(dateTimeError)}
+                  helperText={dateTimeError ?? undefined}
+                  onChange={(value) => {
+                    setDate(value)
+                    setDateTimeError(null)
+                  }}
                 />
               </Box>
 
@@ -233,19 +238,6 @@ export function BookingModal({
                 </Select>
               </Box>
             </Stack>
-
-            {dateTimeError && (
-              <Typography
-                role="alert"
-                sx={{
-                  mt: 1,
-                  color: 'error.main',
-                  fontSize: 13,
-                }}
-              >
-                {dateTimeError}
-              </Typography>
-            )}
 
             <Box>
               <FieldLabel>Продолжительность</FieldLabel>

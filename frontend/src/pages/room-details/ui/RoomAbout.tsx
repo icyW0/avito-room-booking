@@ -55,7 +55,7 @@ export default function RoomAbout({ room }: RoomAboutProps) {
       variant="outlined"
       sx={{
         width: '100%',
-        maxWidth: 420,
+        maxWidth: 550,
         minHeight: 260,
         p: { xs: 2.5, sm: 4 },
         bgcolor: 'background.paper',

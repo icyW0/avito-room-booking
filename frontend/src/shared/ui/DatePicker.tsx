@@ -26,6 +26,8 @@ interface DatePickerProps {
   onChange: (value: string) => void
   label?: string
   fullWidth?: boolean
+  error?: boolean
+  helperText?: string
 }
 
 const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
@@ -37,6 +39,8 @@ export function DatePicker({
   onChange,
   label = 'Выбрать дату',
   fullWidth = false,
+  error = false,
+  helperText,
 }: DatePickerProps) {
   const selectedDate = parseISO(value)
   const minDate = parseISO(min)
@@ -60,23 +64,43 @@ export function DatePicker({
 
   return (
     <>
-      <Button
-        type="button"
-        variant="outlined"
-        startIcon={<CalendarTodayOutlinedIcon />}
-        onClick={openCalendar}
-        sx={{
-          width: fullWidth ? '100%' : 194,
-          height: 52,
-          color: 'text.primary',
-          borderColor: 'divider',
-          fontSize: 16,
-          fontWeight: 600,
-          textTransform: 'none',
-        }}
-      >
-        {label}
-      </Button>
+      <Box sx={{ width: fullWidth ? '100%' : 'auto' }}>
+        <Button
+          type="button"
+          variant="outlined"
+          startIcon={<CalendarTodayOutlinedIcon />}
+          aria-invalid={error || undefined}
+          onClick={openCalendar}
+          sx={{
+            width: fullWidth ? '100%' : 194,
+            height: 52,
+            color: error ? 'error.main' : 'text.primary',
+            borderColor: error ? 'error.main' : 'divider',
+            fontSize: 16,
+            fontWeight: 600,
+            textTransform: 'none',
+            '&:hover': {
+              borderColor: error ? 'error.main' : 'text.secondary',
+            },
+          }}
+        >
+          {label}
+        </Button>
+
+        {helperText && (
+          <Typography
+            role={error ? 'alert' : undefined}
+            sx={{
+              mt: 0.5,
+              color: error ? 'error.main' : 'text.secondary',
+              fontSize: 13,
+              lineHeight: 1.35,
+            }}
+          >
+            {helperText}
+          </Typography>
+        )}
+      </Box>
 
       <Popover
         open={Boolean(anchorElement)}

@@ -1,5 +1,6 @@
-import { Box, Container } from '@mui/material'
-import { useParams } from 'react-router-dom'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { Box, Breadcrumbs, Container, Link, Typography } from '@mui/material'
+import { Link as RouterLink, useParams } from 'react-router-dom'
 import { useRoomQuery } from '../../entities/room/api/useRoomQuery'
 import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage'
 import RoomAbout from './ui/RoomAbout.tsx'
@@ -35,6 +36,34 @@ export function RoomDetailsPage() {
         py: { xs: 3, md: 5 },
       }}
     >
+      <Breadcrumbs
+        aria-label="Хлебные крошки"
+        separator={<ChevronRightIcon sx={{ fontSize: 20 }} />}
+        sx={{ mb: 2.5 }}
+      >
+        <Link
+          component={RouterLink}
+          to="/rooms"
+          underline="hover"
+          color="text.secondary"
+        >
+          Переговорные
+        </Link>
+
+        <Link
+          component={RouterLink}
+          to="/rooms"
+          underline="hover"
+          color="text.secondary"
+        >
+          {room.office.name}
+        </Link>
+
+        <Typography color="text.primary" sx={{ fontWeight: 600 }}>
+          Комната «{room.name}»
+        </Typography>
+      </Breadcrumbs>
+
       <Box
         sx={{
           display: 'flex',
