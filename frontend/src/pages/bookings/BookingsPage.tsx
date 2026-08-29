@@ -18,12 +18,15 @@ import { BookingCard } from './ui/BookingCard.tsx'
 import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage'
 import { EmptyState } from '../../shared/ui/EmptyState'
 import { BookingsPageSkeleton } from './ui/BookingsPageSkeleton'
+import type { Booking } from '../../entities/booking/model/types.ts'
+import { CancelBookingDialog } from './ui/CancelBookingDialog'
 
 type BookingsTab = Extract<BookingsScope, 'upcoming' | 'past'>
 
 export function BookingsPage() {
   const [activeTab, setActiveTab] = useState<BookingsTab>('upcoming')
   const [selectedOfficeId, setSelectedOfficeId] = useState('')
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const officesQuery = useOfficesQuery()
 
@@ -71,7 +74,7 @@ export function BookingsPage() {
             key={booking.id}
             booking={booking}
             canCancel={activeTab === 'upcoming'}
-            onCancel={() => undefined}
+            onCancel={setSelectedBooking}
           />
         ))}
       </Stack>
@@ -198,6 +201,11 @@ export function BookingsPage() {
         </Tabs>
 
         <Box sx={{ mt: 4 }}>{content}</Box>
+
+        <CancelBookingDialog
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+        />
       </Container>
     </Box>
   )
