@@ -65,7 +65,16 @@ export function BookingsPage() {
       />
     )
   } else if (bookings.length === 0) {
-    content = <EmptyState variant="noBookings" />
+    content = (
+      <EmptyState
+        variant="noBookings"
+        description={
+          activeTab === 'upcoming'
+            ? 'У вас пока нет предстоящих бронирований. Перейдите в раздел переговорных, чтобы забронировать комнату.'
+            : 'У вас пока нет прошедших бронирований.'
+        }
+      />
+    )
   } else {
     content = (
       <Stack spacing={2.5}>

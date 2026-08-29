@@ -1,5 +1,5 @@
 import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined'
-import EventSeatOutlinedIcon from '@mui/icons-material/EventSeatOutlined'
+import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -9,6 +9,7 @@ type EmptyStateVariant = 'noRooms' | 'selectOffice' | 'noBookings'
 interface EmptyStateProps {
   variant: EmptyStateVariant
   onAction?: () => void
+  description?: string
 }
 
 const contentByVariant = {
@@ -52,12 +53,16 @@ function EmptyStateIcon({ variant }: { variant: EmptyStateVariant }) {
     >
       {variant === 'noRooms' && <SearchOffOutlinedIcon sx={iconSx} />}
       {variant === 'selectOffice' && <ApartmentOutlinedIcon sx={iconSx} />}
-      {variant === 'noBookings' && <EventSeatOutlinedIcon sx={iconSx} />}
+      {variant === 'noBookings' && <EventBusyOutlinedIcon sx={iconSx} />}
     </Box>
   )
 }
 
-export function EmptyState({ variant, onAction }: EmptyStateProps) {
+export function EmptyState({
+  variant,
+  onAction,
+  description,
+}: EmptyStateProps) {
   const content = contentByVariant[variant]
 
   return (
@@ -83,7 +88,7 @@ export function EmptyState({ variant, onAction }: EmptyStateProps) {
       <Typography
         sx={{ maxWidth: 680, mt: 2, color: 'text.secondary', fontSize: 16 }}
       >
-        {content.description}
+        {description ?? content.description}
       </Typography>
 
       {variant === 'noRooms' && (
