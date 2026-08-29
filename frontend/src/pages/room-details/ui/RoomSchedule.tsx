@@ -16,6 +16,7 @@ import { BookingConflictDialog } from './BookingConflictDialog'
 
 interface RoomScheduleProps {
   room: Room
+  openBookingOnMount?: boolean
 }
 
 function getDateInTimezone(timezone: string) {
@@ -32,12 +33,17 @@ function getDateInTimezone(timezone: string) {
 }
 
 
-export function RoomSchedule({ room }: RoomScheduleProps) {
+export function RoomSchedule({
+  room,
+  openBookingOnMount = false,
+}: RoomScheduleProps) {
   const { id: roomId, office } = room
   const timezone = office.timezone
   const today = getDateInTimezone(timezone)
   const [selectedDate, setSelectedDate] = useState(today)
-  const [isBookingModalOpen, setBookingModalOpen] = useState(false)
+  const [isBookingModalOpen, setBookingModalOpen] = useState(
+    openBookingOnMount,
+  )
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null)
   const [isConflictDialogOpen, setConflictDialogOpen] = useState(false)
 

@@ -75,6 +75,9 @@ export function RoomCard({ room }: RoomCardProps) {
             Подробнее
           </Button>
           <Button
+            component={Link}
+            to={`/rooms/${room.id}`}
+            state={{ openBookingModal: true }}
             variant="contained"
             disabled={!isAvailable}
             sx={{ width: '50%', boxShadow: 'none', textTransform: 'none' }}

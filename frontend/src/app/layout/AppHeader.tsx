@@ -48,6 +48,9 @@ export function AppHeader() {
           }}
         >
           <Stack
+            component={Link}
+            to="/rooms"
+            aria-label="На главную"
             direction="row"
             spacing={1.5}
             sx={{
@@ -56,6 +59,8 @@ export function AppHeader() {
                 md: 240,
               },
               alignItems: 'center',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
             <Box

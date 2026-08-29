@@ -1,6 +1,12 @@
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Box, Breadcrumbs, Container, Link, Typography } from '@mui/material'
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import {
+  Link as RouterLink,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { useRoomQuery } from '../../entities/room/api/useRoomQuery'
 import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage'
 import RoomAbout from './ui/RoomAbout.tsx'
@@ -9,7 +15,22 @@ import { RoomDetailsSkeleton } from './ui/RoomDetailsSkeleton'
 
 export function RoomDetailsPage() {
   const { roomId = '' } = useParams()
+  const location = useLocation()
+  const navigate = useNavigate()
   const roomQuery = useRoomQuery(roomId)
+  const shouldOpenBookingModal =
+    (location.state as { openBookingModal?: boolean } | null)
+      ?.openBookingModal === true
+  const [openBookingOnMount] = useState(shouldOpenBookingModal)
+
+  useEffect(() => {
+    if (shouldOpenBookingModal) {
+      void navigate(location.pathname, {
+        replace: true,
+        state: null,
+      })
+    }
+  }, [location.pathname, navigate, shouldOpenBookingModal])
 
   if (roomQuery.isPending) {
     return <RoomDetailsSkeleton />
@@ -74,7 +95,10 @@ export function RoomDetailsPage() {
       >
         <RoomAbout room={room} />
 
-        <RoomSchedule room={room} />
+        <RoomSchedule
+          room={room}
+          openBookingOnMount={openBookingOnMount}
+        />
       </Box>
     </Container>
   )
