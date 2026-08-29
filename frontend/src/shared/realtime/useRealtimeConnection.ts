@@ -6,6 +6,42 @@ type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting'
 
 const reconnectDelays = [1_000, 2_000, 5_000, 10_000]
 
+interface RealtimeEvent {
+  type: string
+  data: Record<string, unknown>
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function parseRealtimeEvent(payload: string): RealtimeEvent | null {
+  try {
+    const value: unknown = JSON.parse(payload)
+
+    if (!isRecord(value) || typeof value.type !== 'string' || !isRecord(value.data)) {
+      return null
+    }
+
+    return {
+      type: value.type,
+      data: value.data,
+    }
+  } catch {
+    return null
+  }
+}
+
+function getBookingRoomId(data: Record<string, unknown>) {
+  const booking = data.booking
+
+  if (!isRecord(booking) || typeof booking.roomId !== 'string') {
+    return null
+  }
+
+  return booking.roomId
+}
+
 export function useRealtimeConnection() {
   const queryClient = useQueryClient()
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
@@ -19,8 +55,43 @@ export function useRealtimeConnection() {
     let wasDisconnected = false
     let disposed = false
 
+    function handleMessage(message: MessageEvent<string>) {
+      const event = parseRealtimeEvent(message.data)
+
+      if (!event) return
+
+      switch (event.type) {
+        case 'booking.created':
+        case 'booking.cancelled': {
+          const roomId = getBookingRoomId(event.data)
+
+          if (!roomId) return
+
+          void queryClient.invalidateQueries({
+            queryKey: ['room-bookings', roomId],
+          })
+          void queryClient.invalidateQueries({
+            queryKey: ['bookings'],
+          })
+          break
+        }
+
+        case 'room.availability_changed':
+          void queryClient.invalidateQueries({
+            queryKey: ['rooms'],
+          })
+          break
+
+        case 'data.reset':
+          void queryClient.invalidateQueries()
+          break
+      }
+    }
+
     function connect() {
       socket = new WebSocket(env.webSocketUrl)
+
+      socket.addEventListener('message', handleMessage)
 
       socket.addEventListener('open', () => {
         if (disposed) return
