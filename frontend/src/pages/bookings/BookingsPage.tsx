@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { useMyBookingsQuery } from '../../entities/booking/api/useMyBookingsQuery.ts'
 import type { BookingsScope } from '../../entities/booking/api/getMyBookings.ts'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery.ts'
+import { BookingCard } from './ui/BookingCard.tsx'
 
 type BookingsTab = Extract<BookingsScope, 'upcoming' | 'past'>
 
@@ -154,13 +155,16 @@ export function BookingsPage() {
           />
         </Tabs>
 
-        <Box sx={{ mt: 4 }}>
-          <Typography color="text.secondary">
-            {bookingsQuery.isPending
-              ? 'Загрузка бронирований...'
-              : `Получено бронирований: ${bookings.length}`}
-          </Typography>
-        </Box>
+        <Stack spacing={2.5} sx={{ mt: 4 }}>
+          {bookings.map((booking) => (
+            <BookingCard
+              key={booking.id}
+              booking={booking}
+              canCancel={activeTab === 'upcoming'}
+              onCancel={() => undefined}
+            />
+          ))}
+        </Stack>
       </Container>
     </Box>
   )
