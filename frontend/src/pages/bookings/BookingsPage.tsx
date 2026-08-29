@@ -3,6 +3,9 @@ import {
   Box,
   Button,
   Container,
+  ListItemIcon,
+  ListItemText,
+  Menu,
   MenuItem,
   Select,
   Stack,
@@ -10,7 +13,8 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
-import { useState, type ReactNode } from 'react'
+import CheckIcon from '@mui/icons-material/Check'
+import { useState, type MouseEvent, type ReactNode } from 'react'
 import { useMyBookingsQuery } from '../../entities/booking/api/useMyBookingsQuery.ts'
 import type { BookingsScope } from '../../entities/booking/api/getMyBookings.ts'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery.ts'
@@ -22,11 +26,45 @@ import type { Booking } from '../../entities/booking/model/types.ts'
 import { CancelBookingDialog } from './ui/CancelBookingDialog'
 
 type BookingsTab = Extract<BookingsScope, 'upcoming' | 'past'>
+type BookingsPeriod = 'all' | 'today' | '7days' | '30days'
+
+const periodLabels: Record<BookingsPeriod, string> = {
+  all: 'За всё время',
+  today: 'Сегодня',
+  '7days': 'За 7 дней',
+  '30days': 'За 30 дней',
+}
+
+function isBookingInPeriod(
+  booking: Booking,
+  period: BookingsPeriod,
+  tab: BookingsTab,
+) {
+  if (period === 'all') {
+    return true
+  }
+
+  const now = new Date()
+  const startsAt = new Date(booking.startsAt)
+
+  if (period === 'today') {
+    return startsAt.toDateString() === now.toDateString()
+  }
+
+  const periodInDays = period === '7days' ? 7 : 30
+  const boundary = new Date(now)
+  boundary.setDate(now.getDate() + (tab === 'upcoming' ? periodInDays : -periodInDays))
+
+  return tab === 'upcoming' ? startsAt <= boundary : startsAt >= boundary
+}
 
 export function BookingsPage() {
   const [activeTab, setActiveTab] = useState<BookingsTab>('upcoming')
   const [selectedOfficeId, setSelectedOfficeId] = useState('')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [selectedPeriod, setSelectedPeriod] = useState<BookingsPeriod>('all')
+  const [periodMenuAnchor, setPeriodMenuAnchor] =
+    useState<HTMLElement | null>(null)
 
   const officesQuery = useOfficesQuery()
 
@@ -41,6 +79,9 @@ export function BookingsPage() {
 
   const offices = officesQuery.data?.items ?? []
   const bookings = bookingsQuery.data?.items ?? []
+  const filteredBookings = bookings.filter((booking) =>
+    isBookingInPeriod(booking, selectedPeriod, activeTab),
+  )
 
   const isLoading = officesQuery.isPending || bookingsQuery.isPending
   const isError = officesQuery.isError || bookingsQuery.isError
@@ -64,7 +105,7 @@ export function BookingsPage() {
         onRetry={retryLoading}
       />
     )
-  } else if (bookings.length === 0) {
+  } else if (filteredBookings.length === 0) {
     content = (
       <EmptyState
         variant="noBookings"
@@ -78,7 +119,7 @@ export function BookingsPage() {
   } else {
     content = (
       <Stack spacing={2.5}>
-        {bookings.map((booking) => (
+        {filteredBookings.map((booking) => (
           <BookingCard
             key={booking.id}
             booking={booking}
@@ -151,6 +192,12 @@ export function BookingsPage() {
               type="button"
               variant="outlined"
               startIcon={<CalendarTodayOutlinedIcon />}
+              aria-controls={periodMenuAnchor ? 'bookings-period-menu' : undefined}
+              aria-haspopup="menu"
+              aria-expanded={periodMenuAnchor ? 'true' : undefined}
+              onClick={(event: MouseEvent<HTMLButtonElement>) =>
+                setPeriodMenuAnchor(event.currentTarget)
+              }
               sx={{
                 width: { xs: '100%', sm: 188 },
                 height: 52,
@@ -163,8 +210,33 @@ export function BookingsPage() {
                 textTransform: 'none',
               }}
             >
-              За всё время
+              {periodLabels[selectedPeriod]}
             </Button>
+
+            <Menu
+              id="bookings-period-menu"
+              anchorEl={periodMenuAnchor}
+              open={Boolean(periodMenuAnchor)}
+              onClose={() => setPeriodMenuAnchor(null)}
+            >
+              {(Object.keys(periodLabels) as BookingsPeriod[]).map((period) => (
+                <MenuItem
+                  key={period}
+                  selected={period === selectedPeriod}
+                  onClick={() => {
+                    setSelectedPeriod(period)
+                    setPeriodMenuAnchor(null)
+                  }}
+                >
+                  <ListItemText>{periodLabels[period]}</ListItemText>
+                  {period === selectedPeriod && (
+                    <ListItemIcon sx={{ justifyContent: 'flex-end' }}>
+                      <CheckIcon fontSize="small" />
+                    </ListItemIcon>
+                  )}
+                </MenuItem>
+              ))}
+            </Menu>
           </Stack>
         </Stack>
 
@@ -194,7 +266,7 @@ export function BookingsPage() {
             value="upcoming"
             label={
               activeTab === 'upcoming'
-                ? `Предстоящие (${bookings.length})`
+                ? `Предстоящие (${filteredBookings.length})`
                 : 'Предстоящие'
             }
           />
@@ -203,7 +275,7 @@ export function BookingsPage() {
             value="past"
             label={
               activeTab === 'past'
-                ? `Прошедшие (${bookings.length})`
+                ? `Прошедшие (${filteredBookings.length})`
                 : 'Прошедшие'
             }
           />

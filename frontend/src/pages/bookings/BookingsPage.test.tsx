@@ -130,4 +130,37 @@ describe('BookingsPage', () => {
       officeId: 'office-moscow',
     })
   })
+
+  it('filters bookings by the selected period', async () => {
+    const user = userEvent.setup()
+    queryMocks.useMyBookingsQuery.mockReturnValue({
+      data: {
+        items: [
+          bookingFixture,
+          {
+            ...bookingFixture,
+            id: 'booking-future',
+            title: 'Встреча через два месяца',
+            startsAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+            endsAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+          },
+        ],
+      },
+      isPending: false,
+      isError: false,
+      refetch: vi.fn(),
+    })
+
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: 'За всё время' }))
+    await user.click(screen.getByRole('menuitem', { name: 'За 30 дней' }))
+
+    expect(
+      screen.queryByRole('heading', { name: 'Встреча через два месяца' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'За 30 дней' }),
+    ).toBeInTheDocument()
+  })
 })
