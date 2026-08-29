@@ -10,11 +10,14 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useMyBookingsQuery } from '../../entities/booking/api/useMyBookingsQuery.ts'
 import type { BookingsScope } from '../../entities/booking/api/getMyBookings.ts'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery.ts'
 import { BookingCard } from './ui/BookingCard.tsx'
+import { DataLoadingError } from '../../shared/ui/ErrorLoadingPage'
+import { EmptyState } from '../../shared/ui/EmptyState'
+import { BookingsPageSkeleton } from './ui/BookingsPageSkeleton'
 
 type BookingsTab = Extract<BookingsScope, 'upcoming' | 'past'>
 
@@ -35,6 +38,45 @@ export function BookingsPage() {
 
   const offices = officesQuery.data?.items ?? []
   const bookings = bookingsQuery.data?.items ?? []
+
+  const isLoading = officesQuery.isPending || bookingsQuery.isPending
+  const isError = officesQuery.isError || bookingsQuery.isError
+
+  function retryLoading() {
+    void officesQuery.refetch()
+    void bookingsQuery.refetch()
+  }
+
+  if (isLoading) {
+    return <BookingsPageSkeleton />
+  }
+
+  let content: ReactNode
+
+  if (isError) {
+    content = (
+      <DataLoadingError
+        title="Не удалось загрузить данные"
+        description="Произошла ошибка при загрузке ваших бронирований"
+        onRetry={retryLoading}
+      />
+    )
+  } else if (bookings.length === 0) {
+    content = <EmptyState variant="noBookings" />
+  } else {
+    content = (
+      <Stack spacing={2.5}>
+        {bookings.map((booking) => (
+          <BookingCard
+            key={booking.id}
+            booking={booking}
+            canCancel={activeTab === 'upcoming'}
+            onCancel={() => undefined}
+          />
+        ))}
+      </Stack>
+    )
+  }
 
   return (
     <Box
@@ -155,16 +197,7 @@ export function BookingsPage() {
           />
         </Tabs>
 
-        <Stack spacing={2.5} sx={{ mt: 4 }}>
-          {bookings.map((booking) => (
-            <BookingCard
-              key={booking.id}
-              booking={booking}
-              canCancel={activeTab === 'upcoming'}
-              onCancel={() => undefined}
-            />
-          ))}
-        </Stack>
+        <Box sx={{ mt: 4 }}>{content}</Box>
       </Container>
     </Box>
   )
