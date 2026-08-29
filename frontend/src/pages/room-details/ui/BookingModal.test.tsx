@@ -101,11 +101,7 @@ describe('BookingModal', () => {
 
     mutationMocks.mutate.mockImplementationOnce((_payload, options) => {
       options.onError(
-        new ApiError(
-          409,
-          'BOOKING_CONFLICT',
-          'Переговорная уже забронирована',
-        ),
+        new ApiError(409, 'BOOKING_CONFLICT', 'Переговорная уже забронирована'),
       )
     })
 

@@ -58,9 +58,7 @@ describe('BookingsPage', () => {
 
     renderPage()
 
-    expect(
-      screen.getByLabelText('Загрузка бронирований'),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText('Загрузка бронирований')).toBeInTheDocument()
   })
 
   it('shows the loading error', () => {
@@ -99,9 +97,7 @@ describe('BookingsPage', () => {
     expect(
       screen.getByRole('heading', { name: bookingFixture.title }),
     ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Отменить' }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Отменить' })).toBeInTheDocument()
   })
 
   it('requests past bookings after switching tabs', async () => {
@@ -141,8 +137,12 @@ describe('BookingsPage', () => {
             ...bookingFixture,
             id: 'booking-future',
             title: 'Встреча через два месяца',
-            startsAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-            endsAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+            startsAt: new Date(
+              Date.now() + 60 * 24 * 60 * 60 * 1000,
+            ).toISOString(),
+            endsAt: new Date(
+              Date.now() + 60 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000,
+            ).toISOString(),
           },
         ],
       },

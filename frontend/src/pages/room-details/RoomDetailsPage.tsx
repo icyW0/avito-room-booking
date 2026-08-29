@@ -95,10 +95,7 @@ export function RoomDetailsPage() {
       >
         <RoomAbout room={room} />
 
-        <RoomSchedule
-          room={room}
-          openBookingOnMount={openBookingOnMount}
-        />
+        <RoomSchedule room={room} openBookingOnMount={openBookingOnMount} />
       </Box>
     </Container>
   )

@@ -62,7 +62,9 @@ export function RoomCard({ room }: RoomCardProps) {
             }}
           />
           <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-            {isAvailable ? 'Доступно на выбранное время' : 'Недоступно на выбранное время'}
+            {isAvailable
+              ? 'Доступно на выбранное время'
+              : 'Недоступно на выбранное время'}
           </Typography>
         </Box>
         <Stack direction="row" spacing={2}>

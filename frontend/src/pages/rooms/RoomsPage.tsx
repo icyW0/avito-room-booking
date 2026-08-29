@@ -1,5 +1,12 @@
 import { TZDate } from '@date-fns/tz'
-import { Box, Card, Container, Skeleton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  Container,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import { addMinutes, format } from 'date-fns'
 import { useState, type ReactNode } from 'react'
 import { useOfficesQuery } from '../../entities/office/api/useOfficesQuery'
@@ -39,7 +46,9 @@ export function RoomsPage() {
   const officesQuery = useOfficesQuery()
   const offices = officesQuery.data?.items ?? []
   const effectiveOfficeId = selectedOfficeId
-  const selectedOffice = offices.find((office) => office.id === effectiveOfficeId)
+  const selectedOffice = offices.find(
+    (office) => office.id === effectiveOfficeId,
+  )
   const interval = getBookingInterval(filters, selectedOffice?.timezone)
 
   const roomsQuery = useRoomsQuery({
@@ -49,7 +58,8 @@ export function RoomsPage() {
   })
 
   const isLoading =
-    officesQuery.isPending || (Boolean(effectiveOfficeId) && roomsQuery.isPending)
+    officesQuery.isPending ||
+    (Boolean(effectiveOfficeId) && roomsQuery.isPending)
   const isError = officesQuery.isError || roomsQuery.isError
   const rooms = roomsQuery.data?.items ?? []
 
@@ -100,7 +110,10 @@ export function RoomsPage() {
   }
 
   return (
-    <Box component="main" sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box
+      component="main"
+      sx={{ minHeight: '100vh', bgcolor: 'background.default' }}
+    >
       <OfficeSelector
         value={effectiveOfficeId}
         onChange={setSelectedOfficeId}
@@ -118,21 +131,29 @@ export function RoomsPage() {
         disableGutters
         sx={{ px: { xs: 2, md: 5 }, py: { xs: 3, md: 5 } }}
       >
-        <Box component="section" aria-labelledby="rooms-title" aria-busy={isLoading}>
-          {(isLoading || rooms.length > 0) && <Typography
-            id="rooms-title"
-            component="h1"
-            variant="h4"
-            sx={{
-              mb: 4,
-              color: 'text.primary',
-              fontSize: { xs: 26, md: 32 },
-              fontWeight: 700,
-              lineHeight: 1.25,
-            }}
-          >
-            {isLoading ? 'Загрузка переговорных...' : 'Доступные переговорные в этом офисе'}
-          </Typography>}
+        <Box
+          component="section"
+          aria-labelledby="rooms-title"
+          aria-busy={isLoading}
+        >
+          {(isLoading || rooms.length > 0) && (
+            <Typography
+              id="rooms-title"
+              component="h1"
+              variant="h4"
+              sx={{
+                mb: 4,
+                color: 'text.primary',
+                fontSize: { xs: 26, md: 32 },
+                fontWeight: 700,
+                lineHeight: 1.25,
+              }}
+            >
+              {isLoading
+                ? 'Загрузка переговорных...'
+                : 'Доступные переговорные в этом офисе'}
+            </Typography>
+          )}
 
           {content}
         </Box>

@@ -31,12 +31,12 @@ export async function getRooms(params: GetRoomsParams): Promise<RoomsResponse> {
   return response.json() as Promise<RoomsResponse>
 }
 
-export async function getRoom(roomId: string):Promise<Room>{
-  const response = await fetch(`${env.apiUrl}/rooms/${roomId}`);
+export async function getRoom(roomId: string): Promise<Room> {
+  const response = await fetch(`${env.apiUrl}/rooms/${roomId}`)
 
   if (!response.ok) {
     throw new Error(`Не удалось загрузить переговорную: ${response.status}`)
   }
 
-  return response.json() as Promise<Room>;
+  return response.json() as Promise<Room>
 }

@@ -34,7 +34,10 @@ describe('CancelBookingDialog', () => {
 
   it('shows the selected booking information', () => {
     render(
-      <CancelBookingDialog booking={bookingFixture} onClose={() => undefined} />,
+      <CancelBookingDialog
+        booking={bookingFixture}
+        onClose={() => undefined}
+      />,
     )
 
     expect(
@@ -86,7 +89,10 @@ describe('CancelBookingDialog', () => {
     )
 
     render(
-      <CancelBookingDialog booking={bookingFixture} onClose={() => undefined} />,
+      <CancelBookingDialog
+        booking={bookingFixture}
+        onClose={() => undefined}
+      />,
     )
 
     expect(

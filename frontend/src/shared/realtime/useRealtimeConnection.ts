@@ -55,9 +55,10 @@ export function useRealtimeConnection() {
         wasDisconnected = true
         setStatus('reconnecting')
 
-        const delay = reconnectDelays[
-          Math.min(reconnectAttempt, reconnectDelays.length - 1)
-        ]
+        const delay =
+          reconnectDelays[
+            Math.min(reconnectAttempt, reconnectDelays.length - 1)
+          ]
         reconnectAttempt += 1
         reconnectTimer = setTimeout(connect, delay)
       })

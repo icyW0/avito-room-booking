@@ -4,10 +4,7 @@ import TvOutlinedIcon from '@mui/icons-material/TvOutlined'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined'
 import { Box, Card, Divider, Stack, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
-import type {
-  Room,
-  RoomFeature,
-} from '../../../entities/room/model/types'
+import type { Room, RoomFeature } from '../../../entities/room/model/types'
 
 interface RoomAboutProps {
   room: Room

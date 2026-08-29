@@ -35,9 +35,7 @@ describe('RoomCard', () => {
     await user.click(screen.getByRole('link', { name: 'Забронировать' }))
 
     expect(screen.getByText('Страница комнаты')).toBeInTheDocument()
-    expect(
-      screen.getByText('{"openBookingModal":true}'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('{"openBookingModal":true}')).toBeInTheDocument()
   })
 
   it('does not allow booking an unavailable room', () => {
@@ -47,8 +45,9 @@ describe('RoomCard', () => {
       </MemoryRouter>,
     )
 
-    expect(
-      screen.getByRole('link', { name: 'Забронировать' }),
-    ).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('link', { name: 'Забронировать' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    )
   })
 })

@@ -29,11 +29,7 @@ describe('BookingCard', () => {
     const onCancel = vi.fn()
 
     render(
-      <BookingCard
-        booking={bookingFixture}
-        canCancel
-        onCancel={onCancel}
-      />,
+      <BookingCard booking={bookingFixture} canCancel onCancel={onCancel} />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Отменить' }))

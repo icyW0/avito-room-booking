@@ -33,7 +33,10 @@ interface BookingModalProps {
   onConflict: () => void
 }
 
-const durationOptions = Array.from({ length: 8 }, (_, index) => (index + 1) * 15)
+const durationOptions = Array.from(
+  { length: 8 },
+  (_, index) => (index + 1) * 15,
+)
 const timeOptions = Array.from({ length: 44 }, (_, index) => {
   const totalMinutes = 9 * 60 + index * 15
   return `${String(Math.floor(totalMinutes / 60)).padStart(2, '0')}:${String(
@@ -285,11 +288,11 @@ export function BookingModal({
                 createBookingMutation.error instanceof ApiError &&
                 createBookingMutation.error.code === 'BOOKING_CONFLICT'
               ) && (
-              <Alert severity="error">
-                {createBookingMutation.error instanceof ApiError
-                  ? createBookingMutation.error.message
-                  : 'Не удалось создать бронирование. Попробуйте снова.'}
-              </Alert>
+                <Alert severity="error">
+                  {createBookingMutation.error instanceof ApiError
+                    ? createBookingMutation.error.message
+                    : 'Не удалось создать бронирование. Попробуйте снова.'}
+                </Alert>
               )}
 
             <Stack

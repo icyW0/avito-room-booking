@@ -20,7 +20,10 @@ interface RoomsFiltersProps {
 }
 
 const capacityOptions = [2, 4, 6, 8, 10, 12]
-const durationOptions = Array.from({ length: 8 }, (_, index) => (index + 1) * 15)
+const durationOptions = Array.from(
+  { length: 8 },
+  (_, index) => (index + 1) * 15,
+)
 
 function formatTime(totalMinutes: number) {
   const hours = Math.floor(totalMinutes / 60)
@@ -111,7 +114,10 @@ const menuProps = {
 }
 
 function formatDateLabel(value: string) {
-  const label = format(parseISO(value), 'd MMMM, EEE', { locale: ru }).replace('.', '')
+  const label = format(parseISO(value), 'd MMMM, EEE', { locale: ru }).replace(
+    '.',
+    '',
+  )
 
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
@@ -139,7 +145,11 @@ function FilterLabel({ id, children }: { id: string; children: string }) {
   )
 }
 
-export function RoomsFilters({ value, onChange, disabled = false }: RoomsFiltersProps) {
+export function RoomsFilters({
+  value,
+  onChange,
+  disabled = false,
+}: RoomsFiltersProps) {
   const today = new Date()
 
   const availableTimeOptions = getTimeOptions(value.duration)

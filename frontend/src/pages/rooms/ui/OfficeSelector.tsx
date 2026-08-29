@@ -1,5 +1,12 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Box, Container, MenuItem, Select, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Container,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/material'
 import type { Office } from '../../../entities/office/model/types'
 
 interface OfficeSelectorProps {
@@ -15,7 +22,8 @@ function getOfficeLocalTime(office: Office) {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date())
-  const zoneLabel = office.timezone === 'Europe/Moscow' ? 'MSK' : office.timezone
+  const zoneLabel =
+    office.timezone === 'Europe/Moscow' ? 'MSK' : office.timezone
 
   return `${time} ${zoneLabel}`
 }
@@ -76,8 +84,17 @@ export function OfficeSelector({
             fontSize: { xs: 18, md: 22 },
             fontWeight: 700,
             lineHeight: 1.2,
-            '& .MuiSelect-select': { minHeight: 'unset', py: 0, pr: '30px !important', pl: 0 },
-            '& .MuiSelect-icon': { right: 0, color: 'text.primary', fontSize: 24 },
+            '& .MuiSelect-select': {
+              minHeight: 'unset',
+              py: 0,
+              pr: '30px !important',
+              pl: 0,
+            },
+            '& .MuiSelect-icon': {
+              right: 0,
+              color: 'text.primary',
+              fontSize: 24,
+            },
           }}
           renderValue={(officeId) =>
             offices.find((office) => office.id === officeId)?.name ??
@@ -106,14 +123,24 @@ export function OfficeSelector({
           ))}
         </Select>
 
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', color: 'text.secondary' }}>
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{ alignItems: 'center', color: 'text.secondary' }}
+        >
           <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
             {selectedOffice?.address ?? 'Адрес не выбран'}
           </Typography>
           <Box
             component="span"
             aria-hidden="true"
-            sx={{ width: 4, height: 4, flexShrink: 0, bgcolor: '#98a2b3', borderRadius: '50%' }}
+            sx={{
+              width: 4,
+              height: 4,
+              flexShrink: 0,
+              bgcolor: '#98a2b3',
+              borderRadius: '50%',
+            }}
           />
           <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
             {selectedOffice

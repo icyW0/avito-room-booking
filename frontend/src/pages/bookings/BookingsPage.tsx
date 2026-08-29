@@ -53,7 +53,9 @@ function isBookingInPeriod(
 
   const periodInDays = period === '7days' ? 7 : 30
   const boundary = new Date(now)
-  boundary.setDate(now.getDate() + (tab === 'upcoming' ? periodInDays : -periodInDays))
+  boundary.setDate(
+    now.getDate() + (tab === 'upcoming' ? periodInDays : -periodInDays),
+  )
 
   return tab === 'upcoming' ? startsAt <= boundary : startsAt >= boundary
 }
@@ -63,8 +65,9 @@ export function BookingsPage() {
   const [selectedOfficeId, setSelectedOfficeId] = useState('')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState<BookingsPeriod>('all')
-  const [periodMenuAnchor, setPeriodMenuAnchor] =
-    useState<HTMLElement | null>(null)
+  const [periodMenuAnchor, setPeriodMenuAnchor] = useState<HTMLElement | null>(
+    null,
+  )
 
   const officesQuery = useOfficesQuery()
 
@@ -192,7 +195,9 @@ export function BookingsPage() {
               type="button"
               variant="outlined"
               startIcon={<CalendarTodayOutlinedIcon />}
-              aria-controls={periodMenuAnchor ? 'bookings-period-menu' : undefined}
+              aria-controls={
+                periodMenuAnchor ? 'bookings-period-menu' : undefined
+              }
               aria-haspopup="menu"
               aria-expanded={periodMenuAnchor ? 'true' : undefined}
               onClick={(event: MouseEvent<HTMLButtonElement>) =>

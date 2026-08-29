@@ -139,7 +139,10 @@ export function DatePicker({
               size="small"
               aria-label="Предыдущий месяц"
               onClick={() => setVisibleMonth((month) => addMonths(month, -1))}
-              disabled={isBefore(endOfMonth(addMonths(visibleMonth, -1)), minDate)}
+              disabled={isBefore(
+                endOfMonth(addMonths(visibleMonth, -1)),
+                minDate,
+              )}
             >
               <ChevronLeftIcon />
             </IconButton>
@@ -147,7 +150,10 @@ export function DatePicker({
               size="small"
               aria-label="Следующий месяц"
               onClick={() => setVisibleMonth((month) => addMonths(month, 1))}
-              disabled={isAfter(startOfMonth(addMonths(visibleMonth, 1)), maxDate)}
+              disabled={isAfter(
+                startOfMonth(addMonths(visibleMonth, 1)),
+                maxDate,
+              )}
             >
               <ChevronRightIcon />
             </IconButton>

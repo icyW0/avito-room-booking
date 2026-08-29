@@ -32,7 +32,6 @@ function getDateInTimezone(timezone: string) {
   return `${part('year')}-${part('month')}-${part('day')}`
 }
 
-
 export function RoomSchedule({
   room,
   openBookingOnMount = false,
@@ -41,9 +40,7 @@ export function RoomSchedule({
   const timezone = office.timezone
   const today = getDateInTimezone(timezone)
   const [selectedDate, setSelectedDate] = useState(today)
-  const [isBookingModalOpen, setBookingModalOpen] = useState(
-    openBookingOnMount,
-  )
+  const [isBookingModalOpen, setBookingModalOpen] = useState(openBookingOnMount)
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null)
   const [isConflictDialogOpen, setConflictDialogOpen] = useState(false)
 

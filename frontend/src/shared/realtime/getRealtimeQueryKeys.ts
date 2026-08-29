@@ -13,7 +13,11 @@ function parseRealtimeEvent(payload: string): RealtimeEvent | null {
   try {
     const value: unknown = JSON.parse(payload)
 
-    if (!isRecord(value) || typeof value.type !== 'string' || !isRecord(value.data)) {
+    if (
+      !isRecord(value) ||
+      typeof value.type !== 'string' ||
+      !isRecord(value.data)
+    ) {
       return null
     }
 
@@ -46,9 +50,7 @@ export function getRealtimeQueryKeys(payload: string): RealtimeQueryKey[] {
     case 'booking.cancelled': {
       const roomId = getBookingRoomId(event.data)
 
-      return roomId
-        ? [['room-bookings', roomId], ['bookings']]
-        : []
+      return roomId ? [['room-bookings', roomId], ['bookings']] : []
     }
 
     case 'room.availability_changed':
